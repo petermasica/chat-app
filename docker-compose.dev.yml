@@ -1,0 +1,19 @@
+version: '3'
+services:
+  reverse_proxy:
+    image: nginx:1.21.4-alpine
+    ports:
+      - 8090:80
+    volumes:
+      - ./client/proxy/nginx.conf:/etc/nginx/conf.d/default.conf
+
+  api-service:
+    build:
+      context: ./server
+    restart: on-failure
+    volumes:
+      - ./server/src:/app/src
+      - ./server/index.js:/app/index.js
+    command: yarn start:watch
+    ports:
+      - 7000:7000
